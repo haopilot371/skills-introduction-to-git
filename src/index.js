@@ -44,6 +44,7 @@ let dropCounter = 0;
 let dropInterval = 1000;
 let lastTime = 0;
 let targetPattern = null;
+let gameStarted = false;
 
 // Initialize game
 function init() {
@@ -60,19 +61,34 @@ function init() {
   // Set initial target pattern
   setNewTargetPattern();
 
-  // Spawn first piece
-  spawnPiece();
-
-  // Start game loop
-  requestAnimationFrame(gameLoop);
+  // Show welcome message
+  const welcomeMessage = document.getElementById("welcomeMessage");
+  const startButton = document.getElementById("startButton");
+  
+  startButton.addEventListener("click", function() {
+    welcomeMessage.classList.add("hidden");
+    startGame();
+  });
 
   // Add keyboard controls
   document.addEventListener("keydown", handleKeyPress);
 }
 
+// Start the game
+function startGame() {
+  if (gameStarted) return;
+  gameStarted = true;
+
+  // Spawn first piece
+  spawnPiece();
+
+  // Start game loop
+  requestAnimationFrame(gameLoop);
+}
+
 // Game loop
 function gameLoop(time = 0) {
-  if (!gameOver && !isPaused) {
+  if (gameStarted && !gameOver && !isPaused) {
     const deltaTime = time - lastTime;
     lastTime = time;
 
@@ -84,7 +100,9 @@ function gameLoop(time = 0) {
   }
 
   draw();
-  requestAnimationFrame(gameLoop);
+  if (gameStarted) {
+    requestAnimationFrame(gameLoop);
+  }
 }
 
 // Draw everything
